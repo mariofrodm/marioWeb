@@ -1,0 +1,199 @@
+<div class="about flex flex-col md:flex-row min-h-[750px] w-full font-roboto">
+  <!-- LEFT COLUMN (35%) -->
+  <div class="about__left w-full md:w-[35%] bg-secondary flex flex-col justify-between py-12">
+    <!-- UPPER ROW -->
+    <div class="about__upper-row flex-1 flex items-center justify-center min-h-[250px]">
+      @if (profile?.foto_url) { <img [src]="profile.foto_url" alt="Perfil" class="animate-float w-[300px] h-[300px] rounded-full object-cover shadow-xl border-4 border-primary"> } @else { <div class="animate-float w-[300px] h-[300px] rounded-full bg-light/20 shadow-xl"></div> }
+    </div>
+
+    <!-- LOWER ROW (Info & Socials) -->
+    <div class="about__lower-row flex-1 flex flex-col items-center justify-center text-center px-6 space-y-4">
+      @if (profile) {
+        <h2 class="about__name text-[38px] font-bold bg-gradient-to-r from-muted to-light bg-clip-text text-transparent leading-tight">
+          {{ profile.nombre }}
+        </h2>
+        <h3 class="about__title text-[32px] font-bold bg-gradient-to-r from-muted to-light bg-clip-text text-transparent -mt-2 leading-tight">
+          {{ profile.titulo }}
+        </h3>
+        <p class="about__age text-[18px] font-bold bg-gradient-to-r from-muted to-light bg-clip-text text-transparent">
+          Edad: {{ age }} años
+        </p>
+        
+        <a [href]="'mailto:' + profile.correo" class="about__email text-[16px] font-light text-light hover:text-accent transition-colors duration-200 select-all">
+          {{ profile.correo }}
+        </a>
+      } @else {
+        <h2 class="about__name text-[26px] font-bold bg-gradient-to-r from-muted to-light bg-clip-text text-transparent leading-tight">
+          Configura tu perfil
+        </h2>
+        <p class="text-light/60 text-sm">Carga tus datos en Modo Admin</p>
+      }
+
+      <!-- Social Icons Flex -->
+      <div class="flex gap-4 mt-4 justify-center">
+        <a *ngFor="let social of socialLinks" 
+           [href]="social.url" 
+           target="_blank" 
+           class="text-light hover:text-accent transition-colors duration-300 w-6 h-6 block"
+           [attr.aria-label]="social.platform">
+          <span [innerHTML]="social.iconSvg"></span>
+        </a>
+      </div>
+
+      <!-- Modo Admin Toggle -->
+      @if (isAdmin) {
+        <span (click)="showAdminForm = !showAdminForm" class="text-muted hover:text-light text-sm underline cursor-pointer pt-4 block select-none">
+          Modo Admin
+        </span>
+      }
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN (65%) -->
+  <div class="about__right w-full md:w-[65%] bg-light p-8 md:p-16 flex flex-col justify-center">
+    @if (!showAdminForm) {
+      @if (profile) {
+        <div class="max-w-3xl">
+          <h2 class="text-accent text-[20px] font-bold uppercase tracking-wider mb-2">Sobre Mí</h2>
+          <div class="h-1 w-20 bg-accent mb-8"></div>
+          
+          <p class="about__description text-dark font-light text-[18px] leading-relaxed mb-12">
+            {{ profile.sobre_mi }}
+          </p>
+
+          <!-- Capsule Container Grid -->
+          <div class="about__capsule-container flex flex-wrap gap-6">
+            <!-- Languages Capsule -->
+            <div class="about__capsule flex-1 min-w-[220px] rounded-[25px] bg-white shadow-md hover:shadow-lg transition-shadow duration-300 p-6 flex flex-col items-center justify-center text-center border border-dark/5">
+              <span class="text-4xl mb-3" role="img" aria-label="Languages">🗣</span>
+              <h4 class="text-dark/40 font-semibold uppercase text-xs tracking-wider mb-2">Idiomas</h4>
+              <div class="text-dark font-medium text-[16px] space-y-0.5">
+                <p *ngFor="let lang of profile.languages">{{ lang }}</p>
+              </div>
+            </div>
+
+            <!-- Nationality Capsule -->
+            <div class="about__capsule flex-1 min-w-[220px] rounded-[25px] bg-white shadow-md hover:shadow-lg transition-shadow duration-300 p-6 flex flex-col items-center justify-center text-center border border-dark/5">
+              <span class="text-4xl mb-3" role="img" aria-label="Guatemala Flag">🇬🇹</span>
+              <h4 class="text-dark/40 font-semibold uppercase text-xs tracking-wider mb-2">Nacionalidad</h4>
+              <p class="text-dark font-medium text-[16px]">{{ profile.nacionalidad }}</p>
+            </div>
+
+            <!-- Residence Capsule -->
+            <div class="about__capsule flex-1 min-w-[220px] rounded-[25px] bg-white shadow-md hover:shadow-lg transition-shadow duration-300 p-6 flex flex-col items-center justify-center text-center border border-dark/5">
+              <span class="text-4xl mb-3" role="img" aria-label="Location Pin">📍</span>
+              <h4 class="text-dark/40 font-semibold uppercase text-xs tracking-wider mb-2">Residencia</h4>
+              <p class="text-dark font-medium text-[16px]">{{ profile.residencia }}</p>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <div class="max-w-3xl text-center">
+          <h2 class="text-accent text-[20px] font-bold uppercase tracking-wider mb-2">Configura tu perfil</h2>
+          <div class="h-1 w-20 bg-accent mb-8 mx-auto"></div>
+          <p class="text-dark font-light text-[18px] leading-relaxed mb-6">
+            Aún no se ha cargado la información de tu perfil personal.
+          </p>
+          <button (click)="showAdminForm = true" class="bg-primary text-light font-bold rounded-xl px-6 py-2.5 hover:bg-opacity-80 transition-all">
+            Crear Perfil
+          </button>
+        </div>
+      }
+    } @else {
+      <!-- Formulario Reactivo de Admin -->
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="w-full max-w-2xl bg-white p-8 rounded-[25px] shadow-xl border border-dark/5 flex flex-col gap-4 overflow-y-auto max-h-[85vh]">
+        <h2 class="text-accent text-[20px] font-bold uppercase tracking-wider mb-2">Editar Perfil</h2>
+        <div class="h-1 w-20 bg-accent mb-4"></div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- nombre -->
+          <div>
+            <label class="text-dark/60 text-xs font-semibold uppercase block mb-1">Nombre</label>
+            <input type="text" formControlName="nombre" placeholder="Nombre" class="bg-light/50 text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none" />
+          </div>
+          <!-- titulo -->
+          <div>
+            <label class="text-dark/60 text-xs font-semibold uppercase block mb-1">Título</label>
+            <input type="text" formControlName="titulo" placeholder="Título" class="bg-light/50 text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none" />
+          </div>
+          <!-- fecha_nacimiento -->
+          <div>
+            <label class="text-dark/60 text-xs font-semibold uppercase block mb-1">Fecha de Nacimiento</label>
+            <input type="date" formControlName="fecha_nacimiento" class="bg-light/50 text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none" />
+          </div>
+          <!-- correo -->
+          <div>
+            <label class="text-dark/60 text-xs font-semibold uppercase block mb-1">Correo Electrónico</label>
+            <input type="email" formControlName="correo" placeholder="Correo" class="bg-light/50 text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none" />
+          </div>
+          <!-- telefono -->
+          <div>
+            <label class="text-dark/60 text-xs font-semibold uppercase block mb-1">Teléfono</label>
+            <input type="text" formControlName="telefono" placeholder="Teléfono" class="bg-light/50 text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none" />
+          </div>
+          <!-- nacionalidad -->
+          <div>
+            <label class="text-dark/60 text-xs font-semibold uppercase block mb-1">Nacionalidad</label>
+            <input type="text" formControlName="nacionalidad" placeholder="Nacionalidad" class="bg-light/50 text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none" />
+          </div>
+          <!-- residencia -->
+          <div>
+            <label class="text-dark/60 text-xs font-semibold uppercase block mb-1">Residencia</label>
+            <input type="text" formControlName="residencia" placeholder="Residencia" class="bg-light/50 text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none" />
+          </div>
+          <!-- idiomas -->
+          <div>
+            <label class="text-dark/60 text-xs font-semibold uppercase block mb-1">Idiomas (separados por coma)</label>
+            <input type="text" formControlName="idiomas" placeholder="Ej: Español, Inglés" class="bg-light/50 text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none" />
+          </div>
+        </div>
+
+        <!-- sobre_mi -->
+        <div>
+          <label class="text-dark/60 text-xs font-semibold uppercase block mb-1">Sobre Mí</label>
+          <textarea formControlName="sobre_mi" placeholder="Sobre Mí" rows="4" class="bg-light/50 text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none"></textarea>
+        </div>
+
+        <h3 class="text-dark/80 font-bold uppercase tracking-wider text-sm mt-2">Redes Sociales</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- github -->
+          <div>
+            <label class="text-dark/60 text-xs font-semibold uppercase block mb-1">GitHub URL</label>
+            <input type="text" formControlName="github" placeholder="https://github.com/..." class="bg-light/50 text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none" />
+          </div>
+          <!-- linkedin -->
+          <div>
+            <label class="text-dark/60 text-xs font-semibold uppercase block mb-1">LinkedIn URL</label>
+            <input type="text" formControlName="linkedin" placeholder="https://linkedin.com/in/..." class="bg-light/50 text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none" />
+          </div>
+          <!-- instagram -->
+          <div>
+            <label class="text-dark/60 text-xs font-semibold uppercase block mb-1">Instagram URL</label>
+            <input type="text" formControlName="instagram" placeholder="https://instagram.com/..." class="bg-light/50 text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none" />
+          </div>
+          <!-- facebook -->
+          <div>
+            <label class="text-dark/60 text-xs font-semibold uppercase block mb-1">Facebook URL</label>
+            <input type="text" formControlName="facebook" placeholder="https://facebook.com/..." class="bg-light/50 text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none" />
+          </div>
+          <!-- x_twitter -->
+          <div>
+            <label class="text-dark/60 text-xs font-semibold uppercase block mb-1">X / Twitter URL</label>
+            <input type="text" formControlName="x_twitter" placeholder="https://twitter.com/..." class="bg-light/50 text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none" />
+          </div>
+        </div>
+
+        <div class="flex flex-col"><label class="text-sm text-light mb-1">Fotografía de Perfil</label><input type="file" (change)="onFileSelected($event)" accept="image/*" class="bg-light text-dark rounded-xl px-4 py-2 w-full text-sm"></div>
+
+        <div class="flex gap-4 mt-4">
+          <button type="submit" [disabled]="profileForm.invalid || isSubmitting" class="bg-primary text-light font-bold rounded-xl px-6 py-2.5 hover:bg-opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+            {{ isSubmitting ? 'Guardando...' : 'Guardar Perfil' }}
+          </button>
+          <button type="button" (click)="cancelEdit()" class="bg-gray-500 text-light font-bold rounded-xl px-6 py-2.5 hover:bg-opacity-80 transition-all">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</div>

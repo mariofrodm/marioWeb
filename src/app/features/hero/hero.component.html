@@ -1,0 +1,25 @@
+<div class="hero min-h-[750px] w-full flex flex-col items-center justify-center bg-dark text-light relative overflow-hidden font-roboto">
+  <!-- Decorative background elements -->
+  <div class="absolute -top-40 -left-40 w-96 h-96 bg-primary/20 rounded-full blur-[120px] pointer-events-none"></div>
+  <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-accent/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+  <!-- Hero Content -->
+  <div class="hero__content text-center z-10 px-4 max-w-4xl animate-fadeInUp">
+    <h1 class="hero__title text-6xl md:text-8xl font-bold mb-4 tracking-tight">
+      Hola, soy <span class="bg-gradient-to-r from-accent to-muted bg-clip-text text-transparent">Mario</span>
+    </h1>
+    <p class="hero__subtitle text-2xl md:text-4xl font-light text-light/80 mb-8 tracking-wide">
+      Ingeniero en Sistemas
+    </p>
+    <div class="hero__actions flex justify-center gap-4">
+      <button onclick="document.getElementById('projects').scrollIntoView({ behavior: 'smooth' })"
+              class="hero__btn hero__btn--primary px-8 py-3 text-lg font-semibold rounded-full bg-accent text-light hover:bg-accent/80 hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-accent/20">
+        Ver Proyectos
+      </button>
+      <button onclick="document.getElementById('about').scrollIntoView({ behavior: 'smooth' })"
+              class="hero__btn hero__btn--outline px-8 py-3 text-lg font-semibold rounded-full border border-light/20 text-light hover:bg-light/10 hover:-translate-y-0.5 transition-all duration-300">
+        Sobre Mí
+      </button>
+    </div>
+  </div>
+</div>

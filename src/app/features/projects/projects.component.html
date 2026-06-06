@@ -1,0 +1,103 @@
+<div class="projects min-h-[750px] w-full bg-dark py-20 px-4 md:px-0 overflow-x-hidden font-roboto">
+  <div class="max-w-[100vw]">
+    <!-- Section Title -->
+    <h2 class="projects__title text-center text-4xl font-bold text-[#FFFDF7] mb-2">
+      Mis Proyectos
+    </h2>
+    <div class="h-1 w-24 bg-primary mx-auto mb-16"></div>
+
+    <!-- Modo Admin Button -->
+    @if (isAdmin) {
+      <span (click)="showAdminForm = !showAdminForm" class="text-muted hover:text-light text-sm underline cursor-pointer mb-4 text-center block select-none">
+        Modo Admin
+      </span>
+    }
+
+    <!-- Admin Form -->
+    @if (showAdminForm) {
+      <form [formGroup]="projectForm" (ngSubmit)="onSubmit()" class="bg-secondary/30 p-6 rounded-[25px] flex flex-col gap-4 mb-8 w-full max-w-[65%] mx-auto backdrop-blur-sm">
+        <div>
+          <input type="text" formControlName="title" placeholder="Título" class="bg-light text-dark rounded-xl px-4 py-2 w-full" />
+        </div>
+
+        <div>
+          <input type="number" formControlName="year" placeholder="Año" class="bg-light text-dark rounded-xl px-4 py-2 w-full" />
+        </div>
+
+        <div>
+          <textarea formControlName="description" placeholder="Descripción" class="bg-light text-dark rounded-xl px-4 py-2 w-full"></textarea>
+        </div>
+
+        <div>
+          <input type="text" formControlName="projectUrl" placeholder="URL del Proyecto" class="bg-light text-dark rounded-xl px-4 py-2 w-full" />
+        </div>
+
+        <div>
+          <input type="file" (change)="onFileSelected($event)" class="text-light" />
+        </div>
+
+        <div class="flex gap-4">
+          <button type="submit" [disabled]="projectForm.invalid || isSubmitting || (!editingProjectId && !selectedFile)" class="bg-primary text-light font-bold rounded-xl px-4 py-2 hover:bg-opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+            {{ isSubmitting ? 'Procesando...' : (editingProjectId ? 'Actualizar Proyecto' : 'Guardar Proyecto') }}
+          </button>
+          <button type="button" (click)="cancelEdit()" class="bg-gray-500 text-light font-bold rounded-xl px-4 py-2 hover:bg-opacity-80">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    }
+
+    <!-- Grid Container -->
+    <div class="projects__container grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-y-12 max-w-[65%] mx-auto mt-12">
+      @for (project of projects; track project.id) {
+        <div class="projects__card rounded-[25px] bg-secondary/30 p-6 flex flex-col items-center shadow-xl backdrop-blur-sm transition-transform duration-300 hover:scale-105 border border-light/5"
+             [ngClass]="getRowShift($index)">
+          <!-- Project Image / Placeholder -->
+          @if (project.image_url) {
+            <img [src]="project.image_url" 
+                 [alt]="project.title" 
+                 class="projects__image w-[75%] aspect-video object-cover rounded-[25px] mb-6 shadow-md" />
+          } @else {
+            <div class="projects__image-placeholder w-[75%] aspect-video rounded-[25px] mb-6 bg-light/10 border border-light/5 flex items-center justify-center shadow-inner">
+              <svg class="w-16 h-16 text-light/20" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+              </svg>
+            </div>
+          }
+
+          <!-- Project Title -->
+          <h3 class="projects__card-title text-light font-bold text-2xl text-center mb-2 leading-tight">
+            {{ project.title }}
+          </h3>
+
+          <!-- Project Year -->
+          <p class="projects__year text-muted text-sm mb-4 font-medium tracking-wider">
+            Año: {{ project.year }}
+          </p>
+
+          <!-- Project Description -->
+          <p class="projects__description text-light/80 font-light text-center mb-6 leading-relaxed flex-1 text-sm">
+            {{ project.description }}
+          </p>
+
+          <!-- Conditional Link Button -->
+          @if (project.project_url) {
+            <a [href]="project.project_url" 
+               target="_blank" 
+               class="projects__link bg-primary text-light px-8 py-2.5 rounded-full font-semibold hover:bg-opacity-80 transition-colors duration-200 shadow-md shadow-primary/20">
+              Ver más
+            </a>
+          }
+
+          <!-- Admin Actions -->
+          @if (showAdminForm) {
+            <div class="flex gap-4 mt-4 w-full justify-center">
+              <button (click)="editProject(project)" class="text-accent text-sm font-bold hover:underline">Editar</button>
+              <button (click)="deleteProject(project)" class="text-red-500 text-sm font-bold hover:underline">Eliminar</button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

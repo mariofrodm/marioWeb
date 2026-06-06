@@ -1,0 +1,209 @@
+<div class="academic min-h-[750px] w-full bg-light py-20 px-4 md:px-0 font-roboto">
+  <div class="max-w-6xl mx-auto">
+    
+    <!-- SUB-SECCIÓN 1: Habilidades -->
+    <div class="academic__skills mb-20">
+      <h2 class="academic__skills-title text-center text-[34px] font-bold text-primary mb-2">
+        Habilidades en Programación
+      </h2>
+      <div class="h-1 w-16 bg-primary mx-auto mb-6"></div>
+
+      <!-- Admin Toggle Button -->
+      @if (isAdmin) {
+        <span (click)="showSkillForm = !showSkillForm" class="text-muted hover:text-dark text-sm underline cursor-pointer mb-6 text-center block select-none">
+          Modo Admin
+        </span>
+      }
+
+      <!-- Skill Admin Form -->
+      @if (showSkillForm) {
+        <form [formGroup]="skillForm" (ngSubmit)="onSubmitSkill()" class="bg-white p-6 rounded-[25px] shadow-xl flex flex-col gap-4 mb-8 w-full max-w-[65%] mx-auto border border-dark/5">
+          <div>
+            <label class="text-xs text-dark/60 font-semibold uppercase block mb-1">Nombre de Habilidad</label>
+            <input type="text" formControlName="nombre" placeholder="Ej: Angular, TypeScript" class="bg-light text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none text-sm" />
+          </div>
+          <div>
+            <label class="text-xs text-dark/60 font-semibold uppercase block mb-1">Clase de Ícono (Opcional)</label>
+            <input type="text" formControlName="icon_class" placeholder="Ej: devicon-angularjs-plain" class="bg-light text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none text-sm" />
+          </div>
+
+          <div class="flex gap-4">
+            <button type="submit" [disabled]="skillForm.invalid || isSubmittingSkill" class="bg-primary text-light font-bold rounded-xl px-6 py-2.5 hover:bg-opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm">
+              {{ isSubmittingSkill ? 'Procesando...' : (editingSkillId ? 'Actualizar Habilidad' : 'Guardar Habilidad') }}
+            </button>
+            <button type="button" (click)="cancelSkillEdit()" class="bg-gray-500 text-light font-bold rounded-xl px-6 py-2.5 hover:bg-opacity-80 text-sm">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      }
+      
+      <!-- Skills container -->
+      <div class="academic__skills-container flex flex-wrap justify-center gap-4 mt-8 mb-16">
+        @for (skill of skills; track skill.id) {
+          <div class="academic__skill-capsule bg-dark text-light px-6 py-3 rounded-full flex items-center gap-2 font-semibold hover:bg-primary transition-colors duration-200 select-none shadow-md shadow-dark/5">
+            @if (skill.icon_class) {
+              <i [class]="skill.icon_class + ' text-sm'"></i>
+            } @else {
+              <span class="text-sm">💻</span>
+            }
+            <span>{{ skill.nombre }}</span>
+
+            @if (showSkillForm) {
+              <div class="flex gap-2 ml-2 border-l border-light/20 pl-2">
+                <button type="button" (click)="editSkill(skill); $event.stopPropagation()" class="text-xs hover:scale-110 transition-transform" title="Editar">✏️</button>
+                <button type="button" (click)="deleteSkill(skill); $event.stopPropagation()" class="text-xs hover:scale-110 transition-transform" title="Eliminar">🗑️</button>
+              </div>
+            }
+          </div>
+        } @empty {
+          <div class="text-center text-dark/50 py-6">
+            No hay habilidades registradas.
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- SUB-SECCIÓN 2: Historial Académico -->
+    <div class="academic__history">
+      <h2 class="academic__history-title text-center text-[34px] font-bold text-primary mb-2">
+        Perfil Académico
+      </h2>
+      <div class="h-1 w-16 bg-primary mx-auto mb-6"></div>
+
+      <!-- Admin Toggle Button -->
+      @if (isAdmin) {
+        <span (click)="showAcadForm = !showAcadForm" class="text-muted hover:text-dark text-sm underline cursor-pointer mb-6 text-center block select-none">
+          Modo Admin Académico
+        </span>
+      }
+
+      <!-- Acad Admin Form -->
+      @if (showAcadForm) {
+        <form [formGroup]="acadForm" (ngSubmit)="onSubmitAcad()" class="bg-white p-6 rounded-[25px] shadow-xl flex flex-col gap-4 mb-8 w-full max-w-[65%] mx-auto border border-dark/5">
+          <div>
+            <label class="text-xs text-dark/60 font-semibold uppercase block mb-1">Título de Estudio / Certificación</label>
+            <input type="text" formControlName="titulo_estudio" placeholder="Ej: Licenciatura en Ingeniería en Sistemas" class="bg-light text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none text-sm" />
+          </div>
+
+          <input type="text" formControlName="institucion" placeholder="Institución" class="bg-light text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none mb-4" />
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs text-dark/60 font-semibold uppercase block mb-1">Categoría</label>
+              <select formControlName="categoria" class="bg-light text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none text-sm">
+                <option value="">Selecciona una categoría</option>
+                <option value="Títulos">Títulos</option>
+                <option value="Certificados">Certificados</option>
+                <option value="Diplomados">Diplomados</option>
+                <option value="Estudios en la actualidad">Estudios en la actualidad</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-xs text-dark/60 font-semibold uppercase block mb-1">Año de Inicio</label>
+              <input type="number" formControlName="anio_inicio" placeholder="Ej: 2018" class="bg-light text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none text-sm" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center pt-2">
+            <div class="flex items-center gap-2">
+              <input type="checkbox" id="en_curso" formControlName="en_curso" class="w-4 h-4 text-accent border-dark/10 rounded focus:ring-accent" />
+              <label for="en_curso" class="text-xs text-dark/60 font-semibold uppercase cursor-pointer select-none">¿Estudio en curso?</label>
+            </div>
+
+            @if (!acadForm.get('en_curso')?.value) {
+              <div>
+                <label class="text-xs text-dark/60 font-semibold uppercase block mb-1">Año de Fin</label>
+                <input type="number" formControlName="anio_fin" placeholder="Ej: 2023" class="bg-light text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none text-sm" />
+              </div>
+            }
+          </div>
+
+          <div class="flex flex-col gap-1 mb-4"><label class="text-xs text-dark/60 font-semibold uppercase">Documento / Título (PDF)</label><input type="file" (change)="onDocSelected($event)" accept=".pdf" class="text-dark text-sm" /></div>
+
+          <div>
+            <label class="text-xs text-dark/60 font-semibold uppercase block mb-1">Descripción</label>
+            <textarea formControlName="descripcion" placeholder="Descripción detallada de actividades o logros" class="bg-light text-dark rounded-xl px-4 py-2 w-full border border-dark/10 focus:border-accent focus:outline-none text-sm" rows="3"></textarea>
+          </div>
+
+          <div class="flex gap-4">
+            <button type="submit" [disabled]="acadForm.invalid || isSubmittingAcad" class="bg-primary text-light font-bold rounded-xl px-6 py-2.5 hover:bg-opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm">
+              {{ isSubmittingAcad ? 'Procesando...' : (editingAcadId ? 'Actualizar Registro' : 'Guardar Registro') }}
+            </button>
+            <button type="button" (click)="cancelAcadEdit()" class="bg-gray-500 text-light font-bold rounded-xl px-6 py-2.5 hover:bg-opacity-80 text-sm">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      }
+
+      <!-- Filter Container -->
+      <div class="academic__filter flex justify-center mb-12 mt-8">
+        <select (change)="onFilterChange($event)"
+                class="academic__filter-select bg-white border-2 border-primary text-dark rounded-xl px-4 py-2 font-semibold cursor-pointer outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-md">
+          @for (category of categories; track category) {
+            <option [value]="category" [selected]="category === activeFilter">
+              {{ category }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <!-- Grid Container (Filtered) -->
+      <div class="academic__grid grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[65%] mx-auto">
+        @for (item of filteredAcademic; track item.id) {
+          <div class="academic__card rounded-[25px] bg-white border border-gray-100 p-6 flex flex-col shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <!-- Header -->
+            <div class="academic__card-header flex items-center gap-4 mb-4">
+              <div class="academic__logo-placeholder w-[60px] h-[60px] rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-2xl shadow-inner select-none">
+                🎓
+              </div>
+              <div class="academic__header-text flex-1">
+                <!-- Academic Title -->
+                <h3 class="academic__card-title text-dark font-bold text-xl leading-tight">
+                  {{ item.titulo_estudio }}
+                </h3>
+                <p class="text-dark/70 font-medium text-sm mb-2">{{ item.institucion }}</p>
+                <!-- Academic Category Tag -->
+                <span class="inline-block mt-1 text-[11px] font-semibold text-primary uppercase tracking-wider bg-primary/5 px-2.5 py-0.5 rounded-full">
+                  {{ item.categoria }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Date -->
+            @if (item.en_curso) {
+              <p class="text-accent text-sm font-bold mb-4">Fecha: {{ item.anio_inicio }} - Actualidad</p>
+            } @else {
+              <p class="text-accent text-sm font-bold mb-4">Fecha: {{ item.anio_inicio }} {{ item.anio_fin ? '- ' + item.anio_fin : '' }}</p>
+            }
+
+            <!-- Description -->
+            <div class="academic__description-container w-full bg-gray-50/50 p-4 rounded-xl flex-1 border border-dark/5">
+              <p class="academic__description font-light text-dark text-sm leading-relaxed text-left">
+                {{ item.descripcion }}
+              </p>
+            </div>
+
+            @if (item.documento_url) { <a [href]="item.documento_url" target="_blank" class="mt-4 w-full block bg-accent/10 text-accent text-center font-bold py-2 px-4 rounded-xl hover:bg-accent hover:text-white transition-colors duration-300 text-sm">Ver Documento</a> }
+
+            <!-- Actions -->
+            @if (showAcadForm) {
+              <div class="flex gap-4 mt-4 w-full justify-end border-t border-dark/5 pt-3">
+                <button (click)="editAcademic(item)" class="text-accent text-sm font-bold hover:underline">Editar</button>
+                <button (click)="deleteAcademic(item)" class="text-red-500 text-sm font-bold hover:underline">Eliminar</button>
+              </div>
+            }
+          </div>
+        } @empty {
+          <div class="col-span-1 md:col-span-2 text-center py-12 text-muted">
+            <span class="text-4xl block mb-2">🔍</span>
+            No se encontraron registros académicos para la categoría seleccionada.
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+</div>

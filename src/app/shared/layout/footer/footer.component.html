@@ -1,0 +1,91 @@
+<footer class="footer bg-dark text-light border-t border-light/10 py-12 px-6 font-roboto">
+  @if (profile$ | async; as profile) {
+    <div class="footer__container mx-auto md:w-[65%] w-full grid grid-cols-1 md:grid-cols-3 gap-8">
+      
+      <!-- Left Column: Brand/Name -->
+      <div class="footer__column flex flex-col justify-start">
+        <h2 class="text-4xl font-bold text-light mb-2">Mario <span class="text-accent">Rodríguez</span></h2>
+        <p class="text-light/70 text-sm mt-2">Construyendo el futuro, paso a paso.</p>
+      </div>
+
+      <!-- Center Column: Contact Info -->
+      <div class="footer__column flex flex-col justify-start text-[18px] font-light">
+        <h3 class="text-accent font-semibold mb-4 text-[20px]">Contacto</h3>
+        @if (profile.correo) {
+          <p class="footer__contact mb-2 flex items-center">
+            <span class="mr-2">✉</span>
+            <a [href]="'mailto:' + profile.correo" class="hover:text-accent transition-colors duration-200">
+              {{ profile.correo }}
+            </a>
+          </p>
+        }
+        @if (profile.telefono) {
+          <p class="footer__contact mb-2 flex items-center">
+            <span class="mr-2">☏</span>
+            <span>{{ profile.telefono }}</span>
+          </p>
+        }
+        @if (profile.residencia) {
+          <p class="footer__contact flex items-center">
+            <span class="mr-2">📍</span>
+            <span>{{ profile.residencia }}</span>
+          </p>
+        }
+      </div>
+
+      <!-- Right Column: Social Links -->
+      <div class="footer__column flex flex-col justify-start text-[18px] font-light">
+        <h3 class="text-accent font-semibold mb-4 text-[20px]">Redes Sociales</h3>
+        <ul class="space-y-2">
+          @if (profile.github) {
+            <li>
+              <a [href]="profile.github" target="_blank" class="footer__link hover:text-accent transition-colors duration-200 flex items-center">
+                <span class="mr-2">🔗</span> GitHub
+              </a>
+            </li>
+          }
+          @if (profile.linkedin) {
+            <li>
+              <a [href]="profile.linkedin" target="_blank" class="footer__link hover:text-accent transition-colors duration-200 flex items-center">
+                <span class="mr-2">🔗</span> LinkedIn
+              </a>
+            </li>
+          }
+          @if (profile.x_twitter) {
+            <li>
+              <a [href]="profile.x_twitter" target="_blank" class="footer__link hover:text-accent transition-colors duration-200 flex items-center">
+                <span class="mr-2">🔗</span> Twitter
+              </a>
+            </li>
+          }
+          @if (profile.instagram) {
+            <li>
+              <a [href]="profile.instagram" target="_blank" class="footer__link hover:text-accent transition-colors duration-200 flex items-center">
+                <span class="mr-2">🔗</span> Instagram
+              </a>
+            </li>
+          }
+          @if (profile.facebook) {
+            <li>
+              <a [href]="profile.facebook" target="_blank" class="footer__link hover:text-accent transition-colors duration-200 flex items-center">
+                <span class="mr-2">🔗</span> Facebook
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="footer__bottom border-t border-light/5 mt-12 pt-6 text-center text-sm text-light/40">
+      <p class="footer__copyright">
+        &copy; {{ currentYear }} {{ profile.nombre }}. Todos los derechos reservados.
+      </p>
+    </div>
+  } @else {
+    <div class="text-center py-6 text-light/50 font-light">
+      Cargando información del pie de página...
+    </div>
+  }
+</footer>

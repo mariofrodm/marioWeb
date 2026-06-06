@@ -1,0 +1,196 @@
+<nav class="navbar fixed top-0 w-full z-50 transition-all duration-300 font-roboto"
+     [ngClass]="{
+       'navbar--scrolled bg-light h-[60px] text-dark shadow-md': isScrolled,
+       'navbar--top bg-dark h-[80px] text-light': !isScrolled
+     }">
+  <div class="navbar__container mx-auto h-full flex items-center justify-between md:w-[65%] w-full px-4">
+    <!-- Logo -->
+    <a (click)="isLoginRoute ? navigateToHome() : scrollToSection('hero')" 
+       class="navbar__brand text-[26px] font-semibold cursor-pointer select-none transition-colors duration-300"
+       [ngClass]="isScrolled ? 'text-secondary' : 'text-accent'">
+      Mario
+    </a>
+
+    <!-- Desktop Navigation Links -->
+    <div class="navbar__menu hidden md:flex items-center space-x-8">
+      @if (isLoginRoute) {
+        <a (click)="navigateToHome()" 
+           class="navbar__link relative text-[21px] cursor-pointer font-semibold transition-colors duration-300 select-none"
+           [ngClass]="isScrolled ? 'text-dark/80 hover:text-secondary' : 'text-light/80 hover:text-accent'">
+          Regresar
+        </a>
+      } @else {
+        <a (click)="scrollToSection('hero')" 
+           class="navbar__link relative text-[21px] cursor-pointer font-semibold transition-colors duration-300 select-none"
+           [ngClass]="{
+             'navbar__link--active text-secondary after:content-[\'\'] after:absolute after:-bottom-[15px] after:left-0 after:w-full after:h-[4px] after:bg-secondary': activeSection === 'hero',
+             'text-light/80 hover:text-accent': !isScrolled && activeSection !== 'hero',
+             'text-dark/80 hover:text-secondary': isScrolled && activeSection !== 'hero'
+           }">
+          Inicio
+        </a>
+        <a (click)="scrollToSection('about')" 
+           class="navbar__link relative text-[21px] cursor-pointer font-semibold transition-colors duration-300 select-none"
+           [ngClass]="{
+             'navbar__link--active text-secondary after:content-[\'\'] after:absolute after:-bottom-[15px] after:left-0 after:w-full after:h-[4px] after:bg-secondary': activeSection === 'about',
+             'text-light/80 hover:text-accent': !isScrolled && activeSection !== 'about',
+             'text-dark/80 hover:text-secondary': isScrolled && activeSection !== 'about'
+           }">
+          Sobre Mí
+        </a>
+        <a (click)="scrollToSection('experience')" 
+           class="navbar__link relative text-[21px] cursor-pointer font-semibold transition-colors duration-300 select-none"
+           [ngClass]="{
+             'navbar__link--active text-secondary after:content-[\'\'] after:absolute after:-bottom-[15px] after:left-0 after:w-full after:h-[4px] after:bg-secondary': activeSection === 'experience',
+             'text-light/80 hover:text-accent': !isScrolled && activeSection !== 'experience',
+             'text-dark/80 hover:text-secondary': isScrolled && activeSection !== 'experience'
+           }">
+          Experiencia
+        </a>
+        <a (click)="scrollToSection('projects')" 
+           class="navbar__link relative text-[21px] cursor-pointer font-semibold transition-colors duration-300 select-none"
+           [ngClass]="{
+             'navbar__link--active text-secondary after:content-[\'\'] after:absolute after:-bottom-[15px] after:left-0 after:w-full after:h-[4px] after:bg-secondary': activeSection === 'projects',
+             'text-light/80 hover:text-accent': !isScrolled && activeSection !== 'projects',
+             'text-dark/80 hover:text-secondary': isScrolled && activeSection !== 'projects'
+           }">
+          Proyectos
+        </a>
+        <a (click)="scrollToSection('academic')" 
+           class="navbar__link relative text-[21px] cursor-pointer font-semibold transition-colors duration-300 select-none"
+           [ngClass]="{
+             'navbar__link--active text-secondary after:content-[\'\'] after:absolute after:-bottom-[15px] after:left-0 after:w-full after:h-[4px] after:bg-secondary': activeSection === 'academic',
+             'text-light/80 hover:text-accent': !isScrolled && activeSection !== 'academic',
+             'text-dark/80 hover:text-secondary': isScrolled && activeSection !== 'academic'
+           }">
+          Estudios
+        </a>
+        <a class="navbar__link relative text-[21px] cursor-pointer font-semibold transition-colors duration-300 select-none"
+           [ngClass]="isScrolled ? 'text-dark/80 hover:text-secondary' : 'text-light/80 hover:text-accent'">
+          Publicaciones
+        </a>
+      }
+    </div>
+
+    <!-- Desktop CTA Button -->
+    <div class="hidden md:block">
+      @if (!isLoginRoute) {
+        @if (session$ | async) {
+          <button (click)="onSignOut()" 
+                  class="navbar__cta px-4 py-2 text-sm font-semibold rounded border transition-all duration-300 select-none border-gray-500/30 text-gray-400 hover:bg-gray-500 hover:text-light">
+            Cerrar Sesión
+          </button>
+        } @else {
+          <button (click)="navigateToLogin()" 
+                  class="navbar__cta px-4 py-2 text-sm font-semibold rounded border transition-all duration-300 select-none border-accent text-light bg-accent hover:bg-opacity-90">
+            Iniciar Sesión
+          </button>
+        }
+      }
+    </div>
+
+    <!-- Mobile Hamburger Menu Button -->
+    <button (click)="toggleMobileMenu()" 
+            class="navbar__toggle md:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1.5 focus:outline-none"
+            aria-label="Toggle mobile menu">
+      <span class="w-6 h-0.5 transition-all duration-300" 
+            [ngClass]="{
+              'rotate-45 translate-y-2 bg-secondary': isMobileMenuOpen && isScrolled,
+              'rotate-45 translate-y-2 bg-light': isMobileMenuOpen && !isScrolled,
+              'bg-secondary': !isMobileMenuOpen && isScrolled,
+              'bg-light': !isMobileMenuOpen && !isScrolled
+            }"></span>
+      <span class="w-6 h-0.5 transition-all duration-300" 
+            [ngClass]="{
+              'opacity-0': isMobileMenuOpen,
+              'bg-secondary': !isMobileMenuOpen && isScrolled,
+              'bg-light': !isMobileMenuOpen && !isScrolled
+            }"></span>
+      <span class="w-6 h-0.5 transition-all duration-300" 
+            [ngClass]="{
+              '-rotate-45 -translate-y-2 bg-secondary': isMobileMenuOpen && isScrolled,
+              '-rotate-45 -translate-y-2 bg-light': isMobileMenuOpen && !isScrolled,
+              'bg-secondary': !isMobileMenuOpen && isScrolled,
+              'bg-light': !isMobileMenuOpen && !isScrolled
+            }"></span>
+    </button>
+  </div>
+
+  <!-- Mobile Dropdown Menu -->
+  <div *ngIf="isMobileMenuOpen" 
+       class="navbar__dropdown md:hidden w-full flex flex-col transition-all duration-300"
+       [ngClass]="isScrolled ? 'bg-light border-t border-dark/10' : 'bg-dark border-t border-light/10'">
+    @if (isLoginRoute) {
+      <a (click)="navigateToHome()" 
+         class="navbar__dropdown-item min-h-[75px] w-full flex items-center justify-center text-[21px] font-semibold cursor-pointer border-b transition-colors duration-200"
+         [ngClass]="isScrolled ? 'border-dark/5 text-dark hover:bg-dark/5' : 'border-light/5 text-light hover:bg-light/5'">
+        Regresar
+      </a>
+    } @else {
+      <a (click)="scrollToSection('hero')" 
+         class="navbar__dropdown-item min-h-[75px] w-full flex items-center justify-center text-[21px] font-semibold cursor-pointer border-b transition-colors duration-200"
+         [ngClass]="{
+           'border-dark/5 text-secondary bg-dark/5': activeSection === 'hero',
+           'border-dark/5 text-dark hover:bg-dark/5': isScrolled && activeSection !== 'hero',
+           'border-light/5 text-light hover:bg-light/5': !isScrolled && activeSection !== 'hero'
+         }">
+        Inicio
+      </a>
+      <a (click)="scrollToSection('about')" 
+         class="navbar__dropdown-item min-h-[75px] w-full flex items-center justify-center text-[21px] font-semibold cursor-pointer border-b transition-colors duration-200"
+         [ngClass]="{
+           'border-dark/5 text-secondary bg-dark/5': activeSection === 'about',
+           'border-dark/5 text-dark hover:bg-dark/5': isScrolled && activeSection !== 'about',
+           'border-light/5 text-light hover:bg-light/5': !isScrolled && activeSection !== 'about'
+         }">
+        Sobre Mí
+      </a>
+      <a (click)="scrollToSection('experience')" 
+         class="navbar__dropdown-item min-h-[75px] w-full flex items-center justify-center text-[21px] font-semibold cursor-pointer border-b transition-colors duration-200"
+         [ngClass]="{
+           'border-dark/5 text-secondary bg-dark/5': activeSection === 'experience',
+           'border-dark/5 text-dark hover:bg-dark/5': isScrolled && activeSection !== 'experience',
+           'border-light/5 text-light hover:bg-light/5': !isScrolled && activeSection !== 'experience'
+         }">
+        Experiencia
+      </a>
+      <a (click)="scrollToSection('projects')" 
+         class="navbar__dropdown-item min-h-[75px] w-full flex items-center justify-center text-[21px] font-semibold cursor-pointer border-b transition-colors duration-200"
+         [ngClass]="{
+           'border-dark/5 text-secondary bg-dark/5': activeSection === 'projects',
+           'border-dark/5 text-dark hover:bg-dark/5': isScrolled && activeSection !== 'projects',
+           'border-light/5 text-light hover:bg-light/5': !isScrolled && activeSection !== 'projects'
+         }">
+        Proyectos
+      </a>
+      <a (click)="scrollToSection('academic')" 
+         class="navbar__dropdown-item min-h-[75px] w-full flex items-center justify-center text-[21px] font-semibold cursor-pointer border-b transition-colors duration-200"
+         [ngClass]="{
+           'border-dark/5 text-secondary bg-dark/5': activeSection === 'academic',
+           'border-dark/5 text-dark hover:bg-dark/5': isScrolled && activeSection !== 'academic',
+           'border-light/5 text-light hover:bg-light/5': !isScrolled && activeSection !== 'academic'
+         }">
+        Estudios
+      </a>
+      <a class="navbar__dropdown-item min-h-[75px] w-full flex items-center justify-center text-[21px] font-semibold cursor-pointer border-b transition-colors duration-200"
+         [ngClass]="isScrolled ? 'border-dark/5 text-dark hover:bg-dark/5' : 'border-light/5 text-light hover:bg-light/5'">
+        Publicaciones
+      </a>
+
+      <!-- Mobile CTA auth button -->
+      <div class="min-h-[75px] flex items-center justify-center w-full px-4">
+        @if (session$ | async) {
+          <button (click)="onSignOut()" 
+                  class="navbar__dropdown-cta w-full py-3 text-[18px] font-semibold rounded border transition-all duration-300 border-gray-500/30 text-gray-400 hover:bg-gray-500 hover:text-light">
+            Cerrar Sesión
+          </button>
+        } @else {
+          <button (click)="navigateToLogin()" 
+                  class="navbar__dropdown-cta w-full py-3 text-[18px] font-semibold rounded border transition-all duration-300 border-accent text-light bg-accent hover:bg-opacity-90">
+            Iniciar Sesión
+          </button>
+        }
+      </div>
+    }
+  </div>
+</nav>

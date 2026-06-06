@@ -1,0 +1,68 @@
+<div class="min-h-[calc(100vh-100px)] flex items-center justify-center bg-dark px-4 font-roboto">
+  <div class="w-full max-w-md bg-secondary/25 backdrop-blur-md border border-light/10 p-8 rounded-[30px] shadow-2xl">
+    
+    <div class="text-center mb-8">
+      <h2 class="text-3xl font-bold text-light mb-2">
+        Iniciar <span class="text-accent">Sesión</span>
+      </h2>
+      <p class="text-light/50 text-sm">
+        Accede al panel de administración de tu CV.
+      </p>
+    </div>
+
+    @if (errorMessage) {
+      <div class="bg-red-500/15 border border-red-500/30 text-red-400 p-4 rounded-xl text-sm mb-6 text-center">
+        {{ errorMessage }}
+      </div>
+    }
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-6">
+      
+      <!-- Email Field -->
+      <div>
+        <label class="text-xs text-light/60 font-semibold uppercase block mb-2 tracking-wider">
+          Correo Electrónico
+        </label>
+        <input 
+          type="email" 
+          formControlName="email" 
+          placeholder="ejemplo@correo.com" 
+          class="bg-light/5 text-light rounded-xl px-4 py-3 w-full border border-light/10 focus:border-accent focus:outline-none transition-all text-sm placeholder:text-light/35"
+        />
+        @if (loginForm.get('email')?.touched && loginForm.get('email')?.invalid) {
+          <span class="text-red-400 text-xs mt-1 block">
+            Ingresa un correo electrónico válido.
+          </span>
+        }
+      </div>
+
+      <!-- Password Field -->
+      <div>
+        <label class="text-xs text-light/60 font-semibold uppercase block mb-2 tracking-wider">
+          Contraseña
+        </label>
+        <input 
+          type="password" 
+          formControlName="password" 
+          placeholder="••••••••" 
+          class="bg-light/5 text-light rounded-xl px-4 py-3 w-full border border-light/10 focus:border-accent focus:outline-none transition-all text-sm placeholder:text-light/35"
+        />
+        @if (loginForm.get('password')?.touched && loginForm.get('password')?.invalid) {
+          <span class="text-red-400 text-xs mt-1 block">
+            La contraseña debe tener al menos 6 caracteres.
+          </span>
+        }
+      </div>
+
+      <!-- Submit Button -->
+      <button 
+        type="submit" 
+        [disabled]="loginForm.invalid || isSubmitting"
+        class="w-full bg-accent text-light font-bold py-3.5 px-4 rounded-xl hover:bg-opacity-95 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm shadow-lg shadow-accent/20 mt-2"
+      >
+        {{ isSubmitting ? 'Iniciando sesión...' : 'Ingresar' }}
+      </button>
+
+    </form>
+  </div>
+</div>
