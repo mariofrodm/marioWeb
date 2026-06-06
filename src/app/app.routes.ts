@@ -10,6 +10,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent)
   },
   {
+    path: 'editor',
+    loadComponent: () => import('./features/blog/blog-editor/blog-editor.component').then(m => m.BlogEditorComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

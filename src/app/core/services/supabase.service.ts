@@ -319,15 +319,56 @@ export class SupabaseService {
     if (dbError) throw dbError;
     return data;
   }
-
   async deleteAcademic(id: number, docUrl?: string): Promise<any> {
     if (docUrl) {
       const filename = docUrl.split('/').pop();
       if (filename) {
+        // Elimina el documento académico físico del bucket 'documentos' usando remove.
         await this.supabase.storage.from('documentos').remove([filename]);
       }
     }
     // Elimina el registro académico correspondiente utilizando el método delete.
     return this.supabase.from('academico').delete().eq('id', id);
+  }
+
+  // Sube un archivo multimedia al bucket de blogs y retorna su URL pública para usarla en portadas o bloques.
+  async uploadBlogMedia(file: File): Promise<string> {
+    const sanitizedName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+    const filePath = `${Date.now()}_${sanitizedName}`;
+    // Sube el archivo multimedia al bucket 'blog_media' de storage usando upload.
+    const { data, error } = await this.supabase.storage.from('blog_media').upload(filePath, file);
+    if (error) throw error;
+    const { data: publicUrlData } = this.supabase.storage.from('blog_media').getPublicUrl(data!.path);
+    return publicUrlData.publicUrl;
+  }
+
+  // Inserta la publicación padre, obtiene su ID generado, y luego itera e inserta los bloques hijos manteniendo la integridad referencial.
+  async createPublicacion(pubData: any, portadaFile: File, bloques: any[]): Promise<void> {
+    // 1. Subir portada
+    pubData.portada_url = await this.uploadBlogMedia(portadaFile);
+    
+    // 2. Insertar publicación padre
+    // Inserta la nueva publicación en la tabla publicaciones utilizando insert.
+    const { data: pubInsert, error: pubError } = await this.supabase.from('publicaciones').insert([pubData]).select().single();
+    if (pubError) throw pubError;
+    const pubId = pubInsert.id;
+
+    // 3. Procesar bloques (subir imágenes de bloques si existen) y mapear payload
+    const bloquesPayload = [];
+    for (let i = 0; i < bloques.length; i++) {
+      const bloque = bloques[i];
+      let contenido = bloque.contenido;
+      if (bloque.tipo === 'imagen' && bloque.file) {
+        contenido = await this.uploadBlogMedia(bloque.file);
+      }
+      bloquesPayload.push({ publicacion_id: pubId, tipo: bloque.tipo, contenido: contenido, orden: i });
+    }
+
+    // 4. Insertar bloques hijos
+    if (bloquesPayload.length > 0) {
+      // Inserta los bloques de la publicación en bloques_publicacion utilizando insert.
+      const { error: bloquesError } = await this.supabase.from('bloques_publicacion').insert(bloquesPayload);
+      if (bloquesError) throw bloquesError;
+    }
   }
 }
